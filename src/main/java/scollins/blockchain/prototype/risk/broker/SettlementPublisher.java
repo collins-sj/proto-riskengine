@@ -23,7 +23,7 @@ public class SettlementPublisher {
       kafkaProps.put("value.serializer", "scollins.blockchain.prototype.utils.SettlementSerializer");
       kafkaProps.put("client.id", InetAddress.getLocalHost().getHostName());
       kafkaProps.put("group.id", "tradebroker");
-      kafkaProps.put("bootstrap.servers", "192.168.1.91:29092");
+      kafkaProps.put("bootstrap.servers", "localhost:29092"); //192.168.1.91
     } catch (UnknownHostException e) {
       throw new RuntimeException(e);
     }
