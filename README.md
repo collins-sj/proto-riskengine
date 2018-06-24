@@ -14,7 +14,8 @@ The application can be launched from the main application class
 
 This main App class initialises both consumers and producer for the Kafka topics, the core application components, as well as initialising the service APIs backed by `sparkjava`. 
 
----
+##
+
 ### Key Concepts
 
 #### Initialisation
@@ -38,7 +39,7 @@ With the `DataPersistence` component serving as the core data store, all updates
 
 Note: This is a prototype project, and as such has not been implemented with load, transaction management, or thread conflicts in mind. This is particularly the case with regard to the persistence of `UserAccount` data, and any atomic updates between the `DataPersistence` component and the local cache.
 
----
+##
 
 ### Service APIs
 
@@ -75,7 +76,8 @@ Simulates the full trade lifecycle, generating simulated order and settlement tr
     Host: localhost:4567
     Content-Type: application/json
 
----
+##
+
 ### Kafka
 
 #### Connectivity
