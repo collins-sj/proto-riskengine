@@ -29,8 +29,9 @@ The trade lifecycle is as follows:
 
 1. Create an order for a user, for a specific token asset
 2. Initiate a withdrawal of funds (a reserve) for a specified amount of that asset
-3. Initiate an token buy order, and a token sell order - where the sell order is a known order with reserved funds
-4. Settlement of buy and sell, using the reserved amount for the sell order and refunding the difference to the user wallet  
+3. Initiate a token sell order - where the sell order is a known order with reserved funds
+4. Settlement of a sell order, using the reserved amount for the sell order and refunding the difference to the user wallet
+5. Settlement of a buy amount for a specified token. Note - this is not linked to an existing order
 
 #### Components
 The core `RiskEngine` is fronted externally only by the `/order` and `/withdrawbalance` APIs. The settlement function of the `RiskEngine` is serviced by a decoupled kafka queue, with the `TradeBroker` having published settlement messages to the topic.
