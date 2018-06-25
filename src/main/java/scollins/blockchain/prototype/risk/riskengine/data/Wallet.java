@@ -37,7 +37,7 @@ public final class Wallet {
     });
   }
 
-  public void updateBalance(Token token, Function<BigDecimal, BigDecimal> f) {
+  private void updateBalance(Token token, Function<BigDecimal, BigDecimal> f) {
     this.availableBalances.putIfAbsent(token, BigDecimal.ZERO);
     this.availableBalances.compute(token, (k,v) -> {
       BigDecimal currentBalance = this.availableBalances.get(token);

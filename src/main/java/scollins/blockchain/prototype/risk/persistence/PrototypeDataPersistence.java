@@ -14,7 +14,9 @@ import com.google.gson.internal.LinkedTreeMap;
 import scollins.blockchain.prototype.risk.riskengine.data.UserAccount;
 import scollins.blockchain.prototype.risk.riskengine.data.Wallet;
 
-// TODO Turn this into a singleton
+/**
+ * Basic DataPersistence implementation backed by a Map.
+ */
 public class PrototypeDataPersistence implements DataPersistence {
 
   private static PrototypeDataPersistence instance = new PrototypeDataPersistence();

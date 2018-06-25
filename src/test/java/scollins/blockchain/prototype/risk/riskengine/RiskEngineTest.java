@@ -63,7 +63,7 @@ public class RiskEngineTest {
 
   @Test
   public void testWithdrawBalanceWithSufficientFunds() {
-   WithdrawBalanceRequest request = new WithdrawBalanceRequest("1", 1, Token.ETH, new BigDecimal(10.25));
+   WithdrawBalanceRequest request = new WithdrawBalanceRequest("1", 1, Token.ETH, BigDecimal.valueOf(10.25));
 
    WithdrawalStatus status = riskEngine.withdrawBalance(request);
    
@@ -75,7 +75,7 @@ public class RiskEngineTest {
   
   @Test
   public void testWithdrawBalanceWithInsufficientFunds() {
-   WithdrawBalanceRequest request = new WithdrawBalanceRequest("1", 1, Token.ETH, new BigDecimal(10.25));
+   WithdrawBalanceRequest request = new WithdrawBalanceRequest("1", 1, Token.ETH, BigDecimal.valueOf(10.25));
    Mockito.doThrow(RuntimeException.class).when(userAccount).reserveFunds(request.getOrderId(), request.getToken(), request.getQuantity());
 
    WithdrawalStatus status = riskEngine.withdrawBalance(request);
@@ -88,7 +88,7 @@ public class RiskEngineTest {
 
   @Test
   public void testReconcileSettlement() {
-    SettlementMessage settlement = new SettlementMessage(1, "100", Token.ETH, new BigDecimal(100), Token.BTC, BigDecimal.ONE);
+    SettlementMessage settlement = new SettlementMessage(1, "100", Token.ETH, BigDecimal.valueOf(100), Token.BTC, BigDecimal.ONE);
     riskEngine.reconcileSettlement(settlement);
     
     verify(userAccount).completeOrder(settlement.getOrderId(), settlement.getTokenSold(), settlement.getQuantitySold());

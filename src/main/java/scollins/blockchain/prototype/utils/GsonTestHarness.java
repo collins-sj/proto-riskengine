@@ -42,13 +42,13 @@ public class GsonTestHarness {
     
     private static void requestToJson() throws Exception {
       WithdrawBalanceRequest request = new WithdrawBalanceRequest(
-          "1", 100, Token.EUR, new BigDecimal(100));
+          "1", 100, Token.EUR, BigDecimal.valueOf(100));
 
       System.out.println(new Gson().toJson(request));
       
       SettlementMessage settlement = new SettlementMessage(100, "ADBSD", 
-          Token.USD, new BigDecimal(15), 
-          Token.EUR, new BigDecimal(90));
+          Token.USD, BigDecimal.valueOf(15), 
+          Token.EUR, BigDecimal.valueOf(90));
       System.out.println(new Gson().toJson(settlement));
     }
 }

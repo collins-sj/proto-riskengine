@@ -20,7 +20,7 @@ public class UserAccountTest {
   public void init() {
     wallet = new Wallet(1);
     for (Token token : allTokens) {
-      wallet.addQuantity(token, new BigDecimal(100));
+      wallet.addQuantity(token, BigDecimal.valueOf(100));
     }
     userAccount = new UserAccount(1, wallet);
   }
@@ -40,26 +40,26 @@ public class UserAccountTest {
   @Test
   public void testGetAvailableBalance() {
     for (Token token : allTokens) {
-      assertEquals(new BigDecimal(100), userAccount.getAvailableBalance(token));
+      assertEquals(BigDecimal.valueOf(100), userAccount.getAvailableBalance(token));
     }
   }
 
   @Test
   public void testUpdateForTokenPurchase() {
-    userAccount.updateForTokenPurchase(Token.BCH, new BigDecimal(50));
-    assertEquals(new BigDecimal(150), userAccount.getAvailableBalance(Token.BCH));
+    userAccount.updateForTokenPurchase(Token.BCH, BigDecimal.valueOf(50));
+    assertEquals(BigDecimal.valueOf(150), userAccount.getAvailableBalance(Token.BCH));
 
-    userAccount.updateForTokenPurchase(Token.BTC, new BigDecimal(100));
-    assertEquals(new BigDecimal(200), userAccount.getAvailableBalance(Token.BTC));
+    userAccount.updateForTokenPurchase(Token.BTC, BigDecimal.valueOf(100));
+    assertEquals(BigDecimal.valueOf(200), userAccount.getAvailableBalance(Token.BTC));
 
-    userAccount.updateForTokenPurchase(Token.ETH, new BigDecimal(150));
-    assertEquals(new BigDecimal(250), userAccount.getAvailableBalance(Token.ETH));
+    userAccount.updateForTokenPurchase(Token.ETH, BigDecimal.valueOf(150));
+    assertEquals(BigDecimal.valueOf(250), userAccount.getAvailableBalance(Token.ETH));
 
-    userAccount.updateForTokenPurchase(Token.EUR, new BigDecimal(200));
-    assertEquals(new BigDecimal(300), userAccount.getAvailableBalance(Token.EUR));
+    userAccount.updateForTokenPurchase(Token.EUR, BigDecimal.valueOf(200));
+    assertEquals(BigDecimal.valueOf(300), userAccount.getAvailableBalance(Token.EUR));
 
-    userAccount.updateForTokenPurchase(Token.USD, new BigDecimal(250));
-    assertEquals(new BigDecimal(350), userAccount.getAvailableBalance(Token.USD));
+    userAccount.updateForTokenPurchase(Token.USD, BigDecimal.valueOf(250));
+    assertEquals(BigDecimal.valueOf(350), userAccount.getAvailableBalance(Token.USD));
 
   }
   
@@ -69,11 +69,11 @@ public class UserAccountTest {
       assertTrue(userAccount.hasSufficientBalance(token, BigDecimal.ZERO));
       assertTrue(userAccount.hasSufficientBalance(token, BigDecimal.ONE));
       assertTrue(userAccount.hasSufficientBalance(token, BigDecimal.TEN));
-      assertTrue(userAccount.hasSufficientBalance(token, new BigDecimal(99)));
-      assertTrue(userAccount.hasSufficientBalance(token, new BigDecimal(100)));
-      assertFalse(userAccount.hasSufficientBalance(token, new BigDecimal(100.01)));
-      assertFalse(userAccount.hasSufficientBalance(token, new BigDecimal(101)));
-      assertFalse(userAccount.hasSufficientBalance(token, new BigDecimal(500.1)));
+      assertTrue(userAccount.hasSufficientBalance(token, BigDecimal.valueOf(99)));
+      assertTrue(userAccount.hasSufficientBalance(token, BigDecimal.valueOf(100)));
+      assertFalse(userAccount.hasSufficientBalance(token, BigDecimal.valueOf(100.01)));
+      assertFalse(userAccount.hasSufficientBalance(token, BigDecimal.valueOf(101)));
+      assertFalse(userAccount.hasSufficientBalance(token, BigDecimal.valueOf(500.1)));
     }
   }
   
@@ -81,33 +81,42 @@ public class UserAccountTest {
   public void testReserveFunds() {
     Order order = new Order(1, Token.ETH);
     userAccount.addOrder(order);
-    userAccount.reserveFunds(order.getId(), order.getToken(), new BigDecimal(40));
+    userAccount.reserveFunds(order.getId(), order.getToken(), BigDecimal.valueOf(40));
     
     Order updatedOrder = userAccount.getOrder(order.getId());
     assertEquals(order.getId(), updatedOrder.getId());
     assertEquals(new Integer(1), updatedOrder.getUserId());
-    assertEquals(new BigDecimal(40), updatedOrder.getReservedAmount());
+    assertEquals(BigDecimal.valueOf(40), updatedOrder.getReservedAmount());
     assertEquals(BigDecimal.ZERO, updatedOrder.getRefundedAmount());
     assertEquals(OrderStatus.FUNDS_RESERVED, updatedOrder.getStatus());
     
-    assertEquals(new BigDecimal(60), wallet.getAvailableBalance(Token.ETH));
+    // Check the updated wallet balance
+    assertEquals(BigDecimal.valueOf(60), wallet.getAvailableBalance(Token.ETH));
+  }
+  
+  @Test(expected=RuntimeException.class)
+  public void testReserveFundsWithInsufficientBalance() {
+    Order order = new Order(1, Token.ETH);
+    userAccount.addOrder(order);
+    userAccount.reserveFunds(order.getId(), order.getToken(), BigDecimal.valueOf(140));
   }
   
   @Test
   public void testCompleteOrder() {
     Order order = new Order(1, Token.ETH);
     userAccount.addOrder(order);
-    userAccount.reserveFunds(order.getId(), order.getToken(), new BigDecimal(40));
-    userAccount.completeOrder(order.getId(), order.getToken(), new BigDecimal(38));
+    userAccount.reserveFunds(order.getId(), order.getToken(), BigDecimal.valueOf(40));
+    userAccount.completeOrder(order.getId(), order.getToken(), BigDecimal.valueOf(38));
     
     Order updatedOrder = userAccount.getOrder(order.getId());
     assertEquals(order.getId(), updatedOrder.getId());
     assertEquals(new Integer(1), updatedOrder.getUserId());
     assertEquals(BigDecimal.ZERO, updatedOrder.getReservedAmount());
-    assertEquals(new BigDecimal(2), updatedOrder.getRefundedAmount());
+    assertEquals(BigDecimal.valueOf(2), updatedOrder.getRefundedAmount());
     assertEquals(OrderStatus.COMPLETE, updatedOrder.getStatus());
     
-    assertEquals(new BigDecimal(62), wallet.getAvailableBalance(Token.ETH));
+    // Check the updated wallet balance
+    assertEquals(BigDecimal.valueOf(62), wallet.getAvailableBalance(Token.ETH));
   }
   
 }
