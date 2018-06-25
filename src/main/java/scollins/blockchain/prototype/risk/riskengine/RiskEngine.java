@@ -17,6 +17,6 @@ public interface RiskEngine {
   
   public void reconcileSettlement(SettlementMessage settlement);
   
-  public BigDecimal queryBalance(Integer customerId, Token token);
+  public BigDecimal queryBalance(Integer userId, Token token);
 
 }

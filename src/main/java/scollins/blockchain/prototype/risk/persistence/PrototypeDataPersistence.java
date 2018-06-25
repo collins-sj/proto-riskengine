@@ -48,8 +48,8 @@ public class PrototypeDataPersistence implements DataPersistence {
   }
 
   @Override
-  public UserAccount retrieveAccount(Integer customerId) {
-    return dataStore.get(customerId);
+  public UserAccount retrieveAccount(Integer userId) {
+    return dataStore.get(userId);
   }
   
   @Override

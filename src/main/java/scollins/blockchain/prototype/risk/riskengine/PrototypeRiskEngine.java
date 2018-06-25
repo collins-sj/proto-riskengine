@@ -19,17 +19,25 @@ import scollins.blockchain.prototype.risk.riskengine.data.WithdrawalStatus;
 
 public class PrototypeRiskEngine implements RiskEngine {
 
-  private static final PrototypeRiskEngine INSTANCE = new PrototypeRiskEngine();
   // Bounded to 300 records
-  private LoadingCache<Integer, UserAccount> userAccounts;
-  private DataPersistence dataPersistence = PrototypeDataPersistence.getInstance();
+private static final PrototypeRiskEngine INSTANCE = new PrototypeRiskEngine(300);
 
-  private PrototypeRiskEngine() {
+  private LoadingCache<Integer, UserAccount> userAccounts;
+  private DataPersistence dataPersistence;
+
+  /* Package protected constructor used for test. */ 
+  PrototypeRiskEngine(LoadingCache<Integer, UserAccount> userAccounts, DataPersistence dataPersistence) {
+    this.userAccounts = userAccounts;
+    this.dataPersistence = dataPersistence;
+  }
+  
+  private PrototypeRiskEngine(long cacheSize) {
+    dataPersistence = PrototypeDataPersistence.getInstance();
     userAccounts = CacheBuilder.newBuilder()
-        .maximumSize(300)
+        .maximumSize(cacheSize)
         .build(new CacheLoader<Integer, UserAccount>() {
-      public UserAccount load(Integer customerId) throws Exception {
-        return dataPersistence.retrieveAccount(customerId);
+      public UserAccount load(Integer userId) throws Exception {
+        return dataPersistence.retrieveAccount(userId);
       }
     });
   }
@@ -63,12 +71,12 @@ public class PrototypeRiskEngine implements RiskEngine {
   @Override
   public WithdrawalStatus withdrawBalance(WithdrawBalanceRequest request) {
     UserAccount userAccount = getUserAccount(request.getUserId());
-    logDetails("Withdraw initiated", userAccount, request.getOrderId());
+    logDetails("Withdrawal initiated", userAccount, request.getOrderId());
     
     try {
       userAccount.reserveFunds(request.getOrderId(), request.getToken(), request.getQuantity());
     } catch (RuntimeException e) {
-      logDetails("Withdraw failed:" + WithdrawalStatus.INSUFFICIENT_BALANCE, userAccount, request.getOrderId());
+      logDetails("Withdrawal failed:" + WithdrawalStatus.INSUFFICIENT_BALANCE, userAccount, request.getOrderId());
       return WithdrawalStatus.INSUFFICIENT_BALANCE;
     }
 
@@ -78,7 +86,7 @@ public class PrototypeRiskEngine implements RiskEngine {
     // Refresh the local cache record from the data persistence layer.
     userAccounts.refresh(request.getUserId());
 
-    logDetails("Withdraw complete", userAccount, request.getOrderId());
+    logDetails("Withdrawal complete", userAccount, request.getOrderId());
     return WithdrawalStatus.SUFFICIENT_BALANCE;
   }
 
@@ -106,6 +114,6 @@ public class PrototypeRiskEngine implements RiskEngine {
   }
   
   public static void main(String[] args) throws Exception {
-    new PrototypeRiskEngine().dataPersistence.displayRecords();
+    getInstance().dataPersistence.displayRecords();
   }
 }

@@ -13,7 +13,7 @@ public class Order {
   private final OrderStatus status;
   
   public Order(Integer userId, Token token) {
-    this(userId, token, null, OrderStatus.OPEN);
+    this(userId, token, BigDecimal.ZERO, OrderStatus.OPEN);
   }
 
   private Order(Integer userId, Token token, BigDecimal reservedAmount, OrderStatus status) {
