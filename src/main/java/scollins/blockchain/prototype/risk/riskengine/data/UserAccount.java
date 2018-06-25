@@ -13,6 +13,10 @@ public class UserAccount {
 
   private Map<String, Order> orders;
 
+  public UserAccount(Integer userId) {
+    this(userId, new Wallet(userId));
+  }
+  
   public UserAccount(Integer userId, Wallet wallet) {
     this.userId = userId;
     this.wallet = wallet;

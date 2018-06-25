@@ -86,6 +86,7 @@ public class RiskEngineTest {
    verify(userAccounts, never()).refresh(request.getUserId());
   }
 
+  @Test
   public void testReconcileSettlement() {
     SettlementMessage settlement = new SettlementMessage(1, "100", Token.ETH, new BigDecimal(100), Token.BTC, BigDecimal.ONE);
     riskEngine.reconcileSettlement(settlement);
@@ -96,6 +97,7 @@ public class RiskEngineTest {
     verify(userAccounts).refresh(settlement.getUserId());
   }
   
+  @Test
   public void testQueryBalance() {
     when(userAccount.getAvailableBalance(Token.USD)).thenReturn(BigDecimal.TEN);
     

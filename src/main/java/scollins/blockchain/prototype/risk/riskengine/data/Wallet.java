@@ -11,6 +11,10 @@ public final class Wallet {
   
   private Map<Token, BigDecimal> availableBalances = new HashMap<>();
   
+  public Wallet(Integer userId) {
+    this.userId = userId;
+  }
+  
   public Wallet(Integer userId, Map<String, Double> tokenBalances) {
     this.userId = userId;
     tokenBalances.entrySet().stream().forEach(e -> {
@@ -24,10 +28,17 @@ public final class Wallet {
   }
 
   public void removeQuantity(Token token, BigDecimal quantity) {
-    updateBalance(token, current -> current.subtract(quantity));
+    updateBalance(token, current -> { 
+      BigDecimal newBalance = current.subtract(quantity);
+      if (newBalance.compareTo(BigDecimal.ZERO) <= 0) {
+        throw new RuntimeException();
+      }
+      return newBalance;
+    });
   }
 
   public void updateBalance(Token token, Function<BigDecimal, BigDecimal> f) {
+    this.availableBalances.putIfAbsent(token, BigDecimal.ZERO);
     this.availableBalances.compute(token, (k,v) -> {
       BigDecimal currentBalance = this.availableBalances.get(token);
       return f.apply(currentBalance);
@@ -45,37 +56,5 @@ public final class Wallet {
   @Override
   public String toString() {
     return "Wallet [userId=" + userId + ", availableBalances=" + availableBalances + "]";
-  }
-
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((availableBalances == null) ? 0 : availableBalances.hashCode());
-    result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-    return result;
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    Wallet other = (Wallet) obj;
-    if (availableBalances == null) {
-      if (other.availableBalances != null)
-        return false;
-    } else if (!availableBalances.equals(other.availableBalances))
-      return false;
-    if (userId == null) {
-      if (other.userId != null)
-        return false;
-    } else if (!userId.equals(other.userId))
-      return false;
-    return true;
-  }
-  
+  }  
 }

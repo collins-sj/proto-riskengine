@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public class Order {
 
-  private final String orderId = UUID.randomUUID().toString().substring(0, 8);
+  private final String orderId;
   private final Integer userId;
   private final Token token;
   private final BigDecimal reservedAmount;
@@ -13,33 +13,32 @@ public class Order {
   private final OrderStatus status;
   
   public Order(Integer userId, Token token) {
-    this(userId, token, BigDecimal.ZERO, OrderStatus.OPEN);
+    this(UUID.randomUUID().toString().substring(0, 8), 
+        userId, token, BigDecimal.ZERO, BigDecimal.ZERO, OrderStatus.OPEN);
   }
 
-  private Order(Integer userId, Token token, BigDecimal reservedAmount, OrderStatus status) {
-    this(userId, token, reservedAmount, BigDecimal.ZERO, status);
-  }
-
-  private Order(Integer userId, Token token, BigDecimal reservedAmount, BigDecimal refundAmount, OrderStatus status) {
+  private Order(String orderId, Integer userId, Token token, BigDecimal reservedAmount, BigDecimal refundedAmount, OrderStatus status) {
+    this.orderId = orderId;
     this.userId = userId;
     this.token = token;
     this.reservedAmount = reservedAmount;
-    this.refundedAmount = refundAmount;
+    this.refundedAmount = refundedAmount;
     this.status = status;
   }
 
-  public Order reserveFunds(BigDecimal amount) {
-    return new Order(this.userId, this.token, amount, OrderStatus.FUNDS_RESERVED);
+  public Order reserveFunds(BigDecimal reserveAmount) {
+    return new Order(this.orderId, this.userId, this.token, 
+        reserveAmount, this.refundedAmount, OrderStatus.FUNDS_RESERVED);
   }
 
   public Order revoke() {
-    return new Order(this.userId, this.token, 
-        this.reservedAmount, OrderStatus.REVOKED);
+    return new Order(this.orderId, this.userId, this.token, 
+        this.reservedAmount, this.refundedAmount, OrderStatus.REVOKED);
   }
   
   public Order complete(BigDecimal used) {
-    return new Order(this.userId, this.token, BigDecimal.ZERO, 
-        this.reservedAmount.subtract(used), OrderStatus.COMPLETE);
+    return new Order(this.orderId, this.userId, this.token, 
+        BigDecimal.ZERO, this.reservedAmount.subtract(used), OrderStatus.COMPLETE);
   }
   
   public String getId() {
