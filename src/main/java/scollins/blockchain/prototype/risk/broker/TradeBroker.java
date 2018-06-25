@@ -1,6 +1,8 @@
 package scollins.blockchain.prototype.risk.broker;
 
 import java.math.BigDecimal;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import scollins.blockchain.prototype.risk.riskengine.RiskEngine;
 import scollins.blockchain.prototype.risk.riskengine.data.Order;
@@ -13,14 +15,18 @@ public class TradeBroker {
 
   private RiskEngine riskEngine;
   private SettlementPublisher settlementPublisher;
+  private Executor threadExecutor = Executors.newSingleThreadExecutor();  
   
   public TradeBroker(RiskEngine riskEngine, SettlementPublisher settlementPublisher) {
     this.riskEngine = riskEngine;
     this.settlementPublisher = settlementPublisher;
+    
   }
   
   public void settlement(SettlementMessage message) {
-    settlementPublisher.publishSettlement(message);
+    threadExecutor.execute(() -> {
+      settlementPublisher.publishSettlement(message);
+    });
   }
   
   public void simulateTrade() {

@@ -29,9 +29,9 @@ public class SettlementConsumer {
       kafkaProps.put("value.deserializer", "scollins.blockchain.prototype.utils.SettlementDeserializer");
       kafkaProps.put("client.id", InetAddress.getLocalHost().getHostName());
       kafkaProps.put("group.id", "tradebroker");
-      kafkaProps.put("bootstrap.servers", "localhost:29092"); //192.168.1.91
+      kafkaProps.put("bootstrap.servers", "10.51.68.198:29092");
     } catch (UnknownHostException e) {
-      e.printStackTrace();
+      throw new RuntimeException(e);
     }
   }
   
@@ -40,7 +40,6 @@ public class SettlementConsumer {
   }
   
   public void consume() {
-    // and the consumer
     System.out.println("Polling topic " + TOPIC_NAME);
     try (KafkaConsumer<String, SettlementMessage> consumer = new KafkaConsumer<>(kafkaProps))  {
         consumer.subscribe(Arrays.asList(TOPIC_NAME), createListener());

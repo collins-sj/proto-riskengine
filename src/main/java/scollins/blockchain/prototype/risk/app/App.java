@@ -2,6 +2,9 @@ package scollins.blockchain.prototype.risk.app;
 
 import static spark.Spark.*;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import com.google.gson.Gson;
 
 import scollins.blockchain.prototype.risk.broker.SettlementConsumer;
@@ -24,15 +27,16 @@ public class App {
   private static RiskEngine riskEngine;
   private static SettlementPublisher publisher;
   private static TradeBroker tradeBroker;
+  private static Executor threadExecutor = Executors.newSingleThreadExecutor();  
 
   public static void main(String[] args) {
     riskEngine = PrototypeRiskEngine.getInstance();
     publisher = SettlementPublisher.getInstance();
     tradeBroker = new TradeBroker(riskEngine, publisher);
     
-    new Thread(() -> {
+    threadExecutor.execute(() -> {
       new SettlementConsumer(riskEngine).consume();
-    }).start();
+    });
 
     serviceMappings();
   }

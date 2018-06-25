@@ -1,13 +1,11 @@
 package scollins.blockchain.prototype.risk.riskengine.data;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
